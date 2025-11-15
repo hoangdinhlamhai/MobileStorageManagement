@@ -2,8 +2,6 @@ package com.example.MobileStorageManagement.Controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,39 +28,39 @@ public class BrandController {
 
     @GetMapping()
     public List<BrandDTO> getAllBrand() {
-        return brandService.getAllBrands();
+        return this.brandService.getAllBrands();
     }
 
     @GetMapping("/{id}")
     public BrandDTO getBrandById(@PathVariable Integer id) {
-        return brandService.getBrandById(id);
+        return this.brandService.getBrandById(id);
     }
 
     @GetMapping("/search")
     public List<BrandDTO> searchBrands(@RequestParam String name) {
-        return brandService.searchBrandByName(name);
+        return this.brandService.searchBrandByName(name);
     }
 
     @GetMapping("/country/{country}")
     public List<BrandDTO> getBrandsByCountry(@PathVariable String country) {
-        return brandService.getBrandsByCountry(country);
+        return this.brandService.getBrandsByCountry(country);
     }
 
     @PostMapping
     public BrandDTO createBrand(@RequestBody BrandDTO brandDTO) {
-        return brandService.createBrand(brandDTO);
+        return this.brandService.createBrand(brandDTO);
     }
 
     @PutMapping("/{id}")
     public BrandDTO updateBrand(
             @PathVariable Integer id,
             @RequestBody BrandDTO brandDTO) {
-        return brandService.updateBrand(id, brandDTO);
+        return this.brandService.updateBrand(id, brandDTO);
     }
 
     @DeleteMapping("/{id}")
     public Void deleteBrand(@PathVariable Integer id) {
-        brandService.deleteBrand(id);
+        this.brandService.deleteBrand(id);
         return null;
     }
 }

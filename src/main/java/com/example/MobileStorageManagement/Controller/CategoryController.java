@@ -27,29 +27,29 @@ public class CategoryController {
 
     @GetMapping
     public List<CategoryDTO> getAllCategories() {
-        return categoryService.getAllCategories();
+        return this.categoryService.getAllCategories();
     }
 
     @GetMapping("/{id}")
     public CategoryDTO getCategoryById(@PathVariable Integer id) {
-        return categoryService.getCategoryById(id);
+        return this.categoryService.getCategoryById(id);
     }
 
     @PostMapping
     public CategoryDTO createCategory(@RequestBody CategoryDTO categoryDTO) {
-        return categoryService.createCategory(categoryDTO);
+        return this.categoryService.createCategory(categoryDTO);
     }
 
     @PutMapping("/{id}")
     public CategoryDTO updateCategory(
             @PathVariable Integer id,
             @RequestBody CategoryDTO categoryDTO) {
-        return categoryService.updateCategory(id, categoryDTO);
+        return this.categoryService.updateCategory(id, categoryDTO);
     }
 
     @DeleteMapping("/{id}")
     public Void deleteCategory(@PathVariable Integer id) {
-        categoryService.deleteCategory(id);
+        this.categoryService.deleteCategory(id);
         return null;
     }
 }
