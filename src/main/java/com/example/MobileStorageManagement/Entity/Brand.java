@@ -1,5 +1,7 @@
 package com.example.MobileStorageManagement.Entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,15 +15,14 @@ import lombok.*;
 public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "BrandID")
     private Integer brandId;
 
-    @Column(name = "Name")
     private String name;
 
-    @Column(name = "Country")
     private String country;
 
-    @Column(name = "Description", columnDefinition = "TEXT")
     private String description;
+
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Product> products;
 }

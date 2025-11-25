@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Product")
@@ -26,12 +27,26 @@ public class Product {
 
     private Integer stockQuantity;
 
+    private String description;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, // Lưu, cập nhật, xóa ProductImage cùng với Product
             fetch = FetchType.LAZY, orphanRemoval = true // Xóa ProductImage nếu nó không còn liên kết với Product nào
     )
     private List<ProductImage> productImages = new ArrayList<>();
 
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "brand_id") // Foreign key column
+    @JsonIgnore
+    private Brand brand;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id") // Foreign key column
+    @JsonIgnore
+    private Category category;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "spec_id") // Foreign key column
+    private Specification specification;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss a", timezone = "GMT+7")
     private LocalDateTime createdAt;

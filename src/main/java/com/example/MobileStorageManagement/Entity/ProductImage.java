@@ -19,8 +19,10 @@ public class ProductImage {
 
     private String url;
 
+    private long img_index;
+
     @ManyToOne
     @JoinColumn(name = "product_id") // Foreign key column
-    @JsonIgnore
+    @JsonIgnore // bỏ qua trường này khi gọi để tránh lặp vô hạn
     private Product product;
 }

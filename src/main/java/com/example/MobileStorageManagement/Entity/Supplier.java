@@ -13,9 +13,7 @@ import lombok.*;
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SupplierID")
     private Integer supplierId;
 
-    @Column(name = "SupplierName", nullable = false)
     private String supplierName;
 }
