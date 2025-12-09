@@ -18,13 +18,13 @@ public class StockOutController {
     @Autowired
     private StockOutService stockOutService;
 
-    @PreAuthorize("hasRole ('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole ('ADMIN')")
     @GetMapping
     public List<StockOut> getAll(){
         return stockOutService.getAll();
     }
 
-    @PreAuthorize("hasRole ('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole ('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<StockOut> getByid(@PathVariable Long id){
         return stockOutService.getById(id)
@@ -32,7 +32,7 @@ public class StockOutController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole ('ADMIN')")
     @PostMapping
     public ResponseEntity<StockOutResponse> create(
             @RequestBody StockOutRequest stockOutRequest
@@ -41,7 +41,7 @@ public class StockOutController {
         return ResponseEntity.ok(stockOutService.toResponse(created));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole ('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<StockOutResponse> update(
             @PathVariable Long id,
@@ -51,6 +51,7 @@ public class StockOutController {
         return ResponseEntity.ok(stockOutService.toResponse(updated));
     }
 
+    @PreAuthorize("hasRole ('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
         stockOutService.delete(id);

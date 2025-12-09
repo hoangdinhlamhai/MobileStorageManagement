@@ -33,7 +33,7 @@ public class NotificationController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public Notification create(@RequestBody NotificationRequest req) {
         Notification tb = new Notification();
         tb.setTitle(req.getTitle());

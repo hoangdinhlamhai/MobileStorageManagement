@@ -5,6 +5,7 @@ import com.example.MobileStorageManagement.Entity.Order;
 import com.example.MobileStorageManagement.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class OrderController {
     }
 
     // CREATE
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody OrderRequest dto) {
         Order order = orderService.createOrder(dto);
@@ -27,6 +29,7 @@ public class OrderController {
     }
 
     // GET BY ID
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
         Order order = orderService.getOrderById(id);
@@ -34,6 +37,7 @@ public class OrderController {
     }
 
     // GET ALL ORDERS BY USER
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Order>> getOrdersByUser(@PathVariable Integer userId) {
         List<Order> orders = orderService.getOrdersByUser(userId);
@@ -41,6 +45,7 @@ public class OrderController {
     }
 
     // GET ALL
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
@@ -48,6 +53,7 @@ public class OrderController {
     }
 
     // UPDATE
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(
             @PathVariable Long id,
@@ -58,6 +64,7 @@ public class OrderController {
     }
 
     // DELETE
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);

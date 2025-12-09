@@ -2,6 +2,7 @@ package com.example.MobileStorageManagement.Controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,31 +27,37 @@ public class BrandController {
         this.brandService = brandService;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping()
     public List<BrandDTO> getAllBrand() {
         return this.brandService.getAllBrands();
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/{id}")
     public BrandDTO getBrandById(@PathVariable Integer id) {
         return this.brandService.getBrandById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/search")
     public List<BrandDTO> searchBrands(@RequestParam String name) {
         return this.brandService.searchBrandByName(name);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/country/{country}")
     public List<BrandDTO> getBrandsByCountry(@PathVariable String country) {
         return this.brandService.getBrandsByCountry(country);
     }
 
+    @PreAuthorize("hasRole ('ADMIN')")
     @PostMapping
     public BrandDTO createBrand(@RequestBody BrandDTO brandDTO) {
         return this.brandService.createBrand(brandDTO);
     }
 
+    @PreAuthorize("hasRole ('ADMIN')")
     @PutMapping("/{id}")
     public BrandDTO updateBrand(
             @PathVariable Integer id,
@@ -58,6 +65,7 @@ public class BrandController {
         return this.brandService.updateBrand(id, brandDTO);
     }
 
+    @PreAuthorize("hasRole ('ADMIN')")
     @DeleteMapping("/{id}")
     public Void deleteBrand(@PathVariable Integer id) {
         this.brandService.deleteBrand(id);

@@ -2,6 +2,7 @@ package com.example.MobileStorageManagement.Controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,21 +26,25 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
     public List<CategoryDTO> getAllCategories() {
         return this.categoryService.getAllCategories();
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/{id}")
     public CategoryDTO getCategoryById(@PathVariable Integer id) {
         return this.categoryService.getCategoryById(id);
     }
 
+    @PreAuthorize("hasRole ('ADMIN')")
     @PostMapping
     public CategoryDTO createCategory(@RequestBody CategoryDTO categoryDTO) {
         return this.categoryService.createCategory(categoryDTO);
     }
 
+    @PreAuthorize("hasRole ('ADMIN')")
     @PutMapping("/{id}")
     public CategoryDTO updateCategory(
             @PathVariable Integer id,
@@ -47,6 +52,7 @@ public class CategoryController {
         return this.categoryService.updateCategory(id, categoryDTO);
     }
 
+    @PreAuthorize("hasRole ('ADMIN')")
     @DeleteMapping("/{id}")
     public Void deleteCategory(@PathVariable Integer id) {
         this.categoryService.deleteCategory(id);

@@ -7,6 +7,7 @@ import com.example.MobileStorageManagement.Service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +20,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<ReviewResponse> createReview(
             @RequestParam Long orderID,
@@ -39,7 +41,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.toResponse(created));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<ReviewResponse> updateReview(
             @PathVariable Long id,
@@ -59,7 +61,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.toResponse(updated));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<ReviewResponse> getReview(@PathVariable Long id) {
         return reviewService.findById(id)
@@ -68,7 +70,7 @@ public class ReviewController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/order/{orderId}")
     public ResponseEntity<List<ReviewResponse>> getByOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(
@@ -79,7 +81,7 @@ public class ReviewController {
         );
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
     public ResponseEntity<List<ReviewResponse>> getAll() {
         return ResponseEntity.ok(
@@ -90,7 +92,7 @@ public class ReviewController {
         );
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         reviewService.deleteReview(id);
