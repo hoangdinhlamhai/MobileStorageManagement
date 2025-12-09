@@ -9,6 +9,6 @@ public class CartDTO {
     private Integer cartId;
     private Integer userId;
     private String status;
-    private List<CartDetailDTO> cartItems;
+    private List<CartDetailRequestDTO> cartItems;
     private List<Integer> productIds;
 }

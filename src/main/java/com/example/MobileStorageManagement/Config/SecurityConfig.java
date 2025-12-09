@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Cho phép không auth
                         .requestMatchers("/api/user/register", "/api/user/login", "/api/public/**", "/error",
-                                "/api/carts/**")
+                                "/api/carts/**", "/api/cart-details/**")
                         .permitAll()
                         // Còn lại yêu cầu login
                         .anyRequest().authenticated());

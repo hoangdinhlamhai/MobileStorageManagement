@@ -35,7 +35,7 @@ public class Product {
     private List<ProductImage> productImages = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "brand_id") // Foreign key column
+    @JoinColumn(name = "brandId") // Foreign key column
     @JsonIgnore
     private Brand brand;
 

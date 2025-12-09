@@ -3,9 +3,7 @@ package com.example.MobileStorageManagement.DTO;
 import lombok.Data;
 
 @Data
-public class CartDetailDTO {
-    private Integer cartDetailId;
+public class CartDetailRequestDTO {
     private Integer cartId;
     private Integer productId;
-    private Integer quantity;
 }

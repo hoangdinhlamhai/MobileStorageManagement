@@ -23,7 +23,7 @@ public class CartService {
 
     public CartDTO toDTO(Cart cart) {
         CartDTO dto = new CartDTO();
-        dto.setCartId(cart.getCartID());
+        dto.setCartId(cart.getCartId());
         dto.setUserId(cart.getUser().getUserId());
         dto.setStatus(cart.getStatus());
         return dto;
