@@ -2,7 +2,10 @@ package com.example.MobileStorageManagement.Controller;
 
 
 import com.example.MobileStorageManagement.DTO.NotificationRequest;
+import com.example.MobileStorageManagement.DTO.NotificationResponse;
 import com.example.MobileStorageManagement.Entity.Notification;
+import com.example.MobileStorageManagement.Entity.ReceiveNotifications;
+import com.example.MobileStorageManagement.Repository.ReceiveNotificationsRepository;
 import com.example.MobileStorageManagement.Service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +21,23 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private ReceiveNotificationsRepository receiveNotificationsRepository;
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
     public List<Notification> getAll() {
         return notificationService.getAll();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    @GetMapping("/{id}")
-    public ResponseEntity<Notification> getById(@PathVariable Integer id) {
-        return notificationService.getById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/user/{userId}")
+    public List<NotificationResponse> getByUser(@PathVariable Integer userId) {
+        return notificationService.getByUserId(userId);
+    }
+
+    @GetMapping("/role/{roleName}")
+    public List<NotificationResponse> getByRole(@PathVariable String roleName) {
+        return notificationService.getByRole(roleName);
     }
 
     @PostMapping

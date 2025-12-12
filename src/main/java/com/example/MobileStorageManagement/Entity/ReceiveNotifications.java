@@ -1,10 +1,11 @@
 package com.example.MobileStorageManagement.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "receivenotification")
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ReceiveNotifications {
 
     @EmbeddedId

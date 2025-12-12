@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "UserID ")
+    @Column(name = "UserID")
     private Integer userId;
 
     @Column(name = "SDT", length = 15)
@@ -35,7 +35,7 @@ public class User {
     private String googleId;
 
     @ManyToOne
-    @JoinColumn(name = "RoleID ")
+    @JoinColumn(name = "RoleID")
     private Role role;
 
     public Integer getUserId() {

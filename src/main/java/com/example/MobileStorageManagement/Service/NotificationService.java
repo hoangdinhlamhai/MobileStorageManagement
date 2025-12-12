@@ -1,6 +1,7 @@
 package com.example.MobileStorageManagement.Service;
 
 import com.example.MobileStorageManagement.DTO.NotificationRequest;
+import com.example.MobileStorageManagement.DTO.NotificationResponse;
 import com.example.MobileStorageManagement.Entity.Notification;
 import com.example.MobileStorageManagement.Entity.ReceiveNotifications;
 import com.example.MobileStorageManagement.Entity.ReceiveNotificationsId;
@@ -33,6 +34,27 @@ public class NotificationService {
 
     public Optional<Notification> getById(Integer id){
         return notificationRepository.findById(id);
+    }
+
+
+    // Lấy theo userId
+    public List<NotificationResponse> getByUserId(Integer userId) {
+        List<ReceiveNotifications> list =
+                receiveNotificationsRepository.findByUser_UserId(userId);
+
+        return list.stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+
+    // Lấy theo role
+    public List<NotificationResponse> getByRole(String roleName) {
+        return receiveNotificationsRepository.findByUserRole(roleName)
+                .stream()
+                .map(this::toDTO)
+                .distinct()
+                .toList();
     }
 
     @Transactional
@@ -72,5 +94,18 @@ public class NotificationService {
 
     public void delete(Integer id){
         notificationRepository.deleteById(id);
+    }
+
+    public NotificationResponse toDTO(ReceiveNotifications rn) {
+        Notification n = rn.getNotification();
+
+        NotificationResponse dto = new NotificationResponse();
+        dto.setId(n.getNotificationId());
+        dto.setTitle(n.getTitle());
+        dto.setNotificationType(n.getNotificationType());
+        dto.setContent(n.getContent());
+        dto.setIsRead(rn.getIsRead());
+
+        return dto;
     }
 }
