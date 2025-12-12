@@ -4,6 +4,7 @@ package com.example.MobileStorageManagement.Controller;
 import com.example.MobileStorageManagement.DTO.LoginRequest;
 import com.example.MobileStorageManagement.DTO.LoginResponse;
 import com.example.MobileStorageManagement.DTO.RegisterRequest;
+import com.example.MobileStorageManagement.DTO.UpdateUserDTO;
 import com.example.MobileStorageManagement.Entity.Role;
 import com.example.MobileStorageManagement.Entity.User;
 import com.example.MobileStorageManagement.JWT.JwtUtil;
@@ -134,5 +135,17 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(
+            @PathVariable Integer id,
+            @RequestBody UpdateUserDTO req
+    ) {
+        try {
+            User updated = userService.updateUser(id, req);
+            return ResponseEntity.ok(userService.toResponse(updated));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }
