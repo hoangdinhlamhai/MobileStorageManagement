@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Cho phép không auth
-                        .requestMatchers("/api/user/register", "/api/user/login", "/api/public/**","/error").permitAll()
+                        .requestMatchers("/api/user/register", "/api/user/login", "/api/public/**","/error","/paypal/**").permitAll()
                         // Còn lại yêu cầu login
                         .anyRequest().authenticated()
                 );
