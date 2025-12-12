@@ -17,46 +17,51 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @AllArgsConstructor
 @Builder
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ProductID")
     private Integer productId;
 
     private String name;
 
     private Double price;
 
+    @Column(name = "Stock_Quantity")
     private Integer stockQuantity;
 
     private String description;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, // Lưu, cập nhật, xóa ProductImage cùng với Product
-            fetch = FetchType.LAZY, orphanRemoval = true // Xóa ProductImage nếu nó không còn liên kết với Product nào
-    )
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductImage> productImages = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "brand_id") // Foreign key column
+    @JoinColumn(name = "BrandID")
     @JsonIgnore
     private Brand brand;
 
     @ManyToOne
-    @JoinColumn(name = "category_id") // Foreign key column
+    @JoinColumn(name = "CategoryID")
     @JsonIgnore
     private Category category;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "spec_id") // Foreign key column
+    @OneToOne
+    @JoinColumn(name = "SpecID")
     private Specification specification;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss a", timezone = "GMT+7")
+    @Column(name = "Created_At")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+7")
     private LocalDateTime createdAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss a", timezone = "GMT+7")
+    @Column(name = "Updated_At")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+7")
     private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate

@@ -25,13 +25,11 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PreAuthorize("hasRole ('ADMIN') or hasRole('USER')")
     @GetMapping
     public List<ProductDTO> getAll() {
         return productService.getAll();
     }
 
-    @PreAuthorize("hasRole ('ADMIN')")
     @GetMapping("/{id}")
     public ProductDTO getById(@PathVariable Integer id) {
         return productService.getById(id);
