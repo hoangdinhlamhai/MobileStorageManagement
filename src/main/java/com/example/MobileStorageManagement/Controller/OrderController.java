@@ -1,6 +1,7 @@
 package com.example.MobileStorageManagement.Controller;
 
 import com.example.MobileStorageManagement.DTO.OrderRequest;
+import com.example.MobileStorageManagement.DTO.OrderResponse;
 import com.example.MobileStorageManagement.Entity.Order;
 import com.example.MobileStorageManagement.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,13 @@ public class OrderController {
     // CREATE
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody OrderRequest dto) {
+    public ResponseEntity<OrderResponse> createOrder(
+            @RequestBody OrderRequest dto
+    ) {
         Order order = orderService.createOrder(dto);
-        return ResponseEntity.ok(order);
+        return ResponseEntity.ok(orderService.toResponse(order));
     }
+
 
     // GET BY ID
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
@@ -55,13 +59,14 @@ public class OrderController {
     // UPDATE
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(
+    public ResponseEntity<OrderResponse> updateOrder(
             @PathVariable Long id,
             @RequestBody OrderRequest dto
     ) {
-        Order updatedOrder = orderService.updateOrder(id, dto);
-        return ResponseEntity.ok(updatedOrder);
+        Order order = orderService.updateOrder(id, dto);
+        return ResponseEntity.ok(orderService.toResponse(order));
     }
+
 
     // DELETE
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")

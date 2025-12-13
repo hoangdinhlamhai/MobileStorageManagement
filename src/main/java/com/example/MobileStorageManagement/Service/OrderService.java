@@ -1,6 +1,7 @@
 package com.example.MobileStorageManagement.Service;
 
 import com.example.MobileStorageManagement.DTO.OrderRequest;
+import com.example.MobileStorageManagement.DTO.OrderResponse;
 import com.example.MobileStorageManagement.Entity.Order;
 import com.example.MobileStorageManagement.Entity.User;
 import com.example.MobileStorageManagement.Repository.OrderRepository;
@@ -57,16 +58,31 @@ public class OrderService {
             order.setOrderDate(dto.getOrderDate());
         }
 
-        order.setStatus(dto.getStatus());
-        order.setPaymentStatus(dto.getPaymentStatus());
+        if (dto.getStatus() != null) {
+            order.setStatus(dto.getStatus());
+        }
+
+        if (dto.getPaymentStatus() != null) {
+            order.setPaymentStatus(dto.getPaymentStatus());
+        }
 
         return orderRepository.save(order);
     }
+
 
     // DELETE
     public void deleteOrder(Long id) {
         Order order = getOrderById(id);
         orderRepository.delete(order);
+    }
+
+    public static OrderResponse toResponse(Order order) {
+        OrderResponse res = new OrderResponse();
+        res.setOrderID(order.getOrderID());
+        res.setStatus(order.getStatus());
+        res.setPaymentStatus(order.getPaymentStatus());
+        res.setUserID(order.getUser().getUserId());
+        return res;
     }
 
 }
