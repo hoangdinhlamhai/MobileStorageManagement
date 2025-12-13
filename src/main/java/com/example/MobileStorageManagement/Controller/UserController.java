@@ -1,15 +1,15 @@
 package com.example.MobileStorageManagement.Controller;
 
 
-import com.example.MobileStorageManagement.DTO.LoginRequest;
-import com.example.MobileStorageManagement.DTO.LoginResponse;
-import com.example.MobileStorageManagement.DTO.RegisterRequest;
-import com.example.MobileStorageManagement.DTO.UpdateUserDTO;
+import com.example.MobileStorageManagement.DTO.*;
+import com.example.MobileStorageManagement.Entity.Cart;
 import com.example.MobileStorageManagement.Entity.Role;
 import com.example.MobileStorageManagement.Entity.User;
 import com.example.MobileStorageManagement.JWT.JwtUtil;
+import com.example.MobileStorageManagement.Repository.CartRepository;
 import com.example.MobileStorageManagement.Repository.RoleRepository;
 import com.example.MobileStorageManagement.Repository.UserRepository;
+import com.example.MobileStorageManagement.Service.CartService;
 import com.example.MobileStorageManagement.Service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +52,15 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private CartService cartService;
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+
         if (userService.existsBySdt(String.valueOf(req.getSdt()))) {
             return ResponseEntity.badRequest().body("SĐT đã tồn tại");
         }
@@ -67,13 +74,18 @@ public class UserController {
 
         Role role = roleRepository.findById(1)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy quyền"));
-
         user.setRole(role);
+        User savedUser = userService.saveUser(user);
 
-        userService.saveUser(user);
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+        cart.setStatus("ACTIVE");
+
+        cartRepository.save(cart);
 
         return ResponseEntity.ok("Đăng ký thành công");
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
@@ -82,8 +94,9 @@ public class UserController {
                 ? req.getSdt()
                 : req.getEmail();
 
+        Authentication authentication;
         try {
-            authManager.authenticate(
+            authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(input, req.getPassWord())
             );
         } catch (Exception e) {
@@ -91,19 +104,25 @@ public class UserController {
                     .body("Sai thông tin đăng nhập");
         }
 
-        Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(input, req.getPassWord())
-        );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Lấy role
         List<String> roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .toList();
 
-        // Lấy user info từ DB
+        // Lấy user
         User user = userRepository.findBySdtOrEmail(input, input)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy user"));
+
+        // Get hoặc create cart
+        Cart cartEntity = cartService.getCartByUserId(user.getUserId())
+                .orElseGet(() -> cartRepository.save(
+                        Cart.builder()
+                                .user(user)
+                                .status("ACTIVE")
+                                .build()
+                ));
 
         // Generate token
         String jwt = jwtUtil.generateToken(input, roles);
@@ -117,10 +136,12 @@ public class UserController {
         res.setAddress(user.getAddress());
         res.setAvatar(user.getAvatar());
         res.setRole(user.getRole().getRoleId());
+        res.setCartId(cartEntity.getCartId());
         res.setToken(jwt);
 
         return ResponseEntity.ok(res);
     }
+
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('WORKER')")
     @GetMapping("/sdt/{sdt}")

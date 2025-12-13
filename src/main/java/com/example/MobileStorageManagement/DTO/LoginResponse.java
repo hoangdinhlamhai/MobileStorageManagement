@@ -1,6 +1,7 @@
 package com.example.MobileStorageManagement.DTO;
 
 
+import com.example.MobileStorageManagement.Entity.Cart;
 import com.example.MobileStorageManagement.Entity.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,5 +19,6 @@ public class LoginResponse {
     private String address;
     private String avatar;
     private Integer role;
+    private Integer cartId;
     private String token;
 }

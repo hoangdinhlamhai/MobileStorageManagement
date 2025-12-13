@@ -2,6 +2,7 @@ package com.example.MobileStorageManagement.Service;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,15 +39,13 @@ public class CartService {
         return toDTO(savedCart);
     }
 
-    public CartDTO getCartByUserId(Integer userId) {
+    public Optional<Cart> getCartByUserId(Integer userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
-        Cart cart = cartRepository.findByUser(user)
-                .orElseThrow();
-
-        return toDTO(cart);
+        return cartRepository.findByUser(user);
     }
+
 
     public List<CartDTO> getAllCarts() {
         List<Cart> carts = cartRepository.findAll();
@@ -61,4 +60,6 @@ public class CartService {
                 .orElseThrow();
         cartRepository.delete(cart);
     }
+
+
 }
