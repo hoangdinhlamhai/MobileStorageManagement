@@ -27,19 +27,19 @@ public class CartDetailController {
     }
 
     @GetMapping
-    public List<CartDetail> getAll() {
+    public List<CartDetailResponse> getAll() {
         return cartDetailService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CartDetail> getById(@PathVariable Integer id) {
+    public ResponseEntity<CartDetailResponse> getById(@PathVariable Integer id) {
         return cartDetailService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/cart/{cartId}")
-    public List<CartDetail> getByCartId(@PathVariable Integer cartId) {
+    public List<CartDetailResponse> getByCartId(@PathVariable Integer cartId) {
         return cartDetailService.getByCartId(cartId);
     }
 

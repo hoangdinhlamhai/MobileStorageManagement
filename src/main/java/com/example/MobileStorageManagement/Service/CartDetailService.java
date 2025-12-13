@@ -23,17 +23,25 @@ public class CartDetailService {
     private final CartDetailRepository cartDetailRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public List<CartDetail> getAll() {
-        return cartDetailRepository.findAll();
+    public List<CartDetailResponse> getAll() {
+        return cartDetailRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    public Optional<CartDetail> getById(Integer id) {
-        return cartDetailRepository.findById(id);
+    public Optional<CartDetailResponse> getById(Integer id) {
+        return cartDetailRepository.findById(id)
+                .map(this::toResponse);
     }
 
-    public List<CartDetail> getByCartId(Integer cartId) {
-        return cartDetailRepository.findByCartCartId(cartId);
+    public List<CartDetailResponse> getByCartId(Integer cartId) {
+        return cartDetailRepository.findByCartCartId(cartId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     public CartDetail createCartDetail(CartDetailRequestDTO dto) {
@@ -84,7 +92,10 @@ public class CartDetailService {
         CartDetailResponse dto = new CartDetailResponse();
         dto.setCartDetailsId(cartDetail.getCartDetailsId());
         dto.setCartId(cartDetail.getCart().getCartId());
-        dto.setProductId(cartDetail.getProduct().getProductId());
+        dto.setProduct(productService.toDTO(cartDetail.getProduct()));
+
         return dto;
     }
+
+
 }

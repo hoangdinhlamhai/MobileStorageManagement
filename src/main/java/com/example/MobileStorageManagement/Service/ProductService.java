@@ -21,7 +21,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    private ProductDTO toDTO(Product product) {
+    public ProductDTO toDTO(Product product) {
         return ProductDTO.builder()
                 .productId(product.getProductId())
                 .name(product.getName())
