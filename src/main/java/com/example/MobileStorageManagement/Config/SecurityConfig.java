@@ -42,9 +42,19 @@ public class SecurityConfig {
                 }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Cho phép không auth
-                        .requestMatchers("/api/user/register", "/api/user/login", "/api/public/**","/error", "/api/products", "/api/products/*").permitAll()
-                        // Còn lại yêu cầu login
+                        // ===== PUBLIC / NO AUTH =====
+                        .requestMatchers(
+                                "/api/user/register",
+                                "/api/user/login",
+                                "/api/public/**",
+                                "/api/products",
+                                "/api/products/*",
+
+                                "/paypal/**",
+                                "/error",
+                                "/favicon.ico"
+                        ).permitAll()
+
                         .anyRequest().authenticated()
                 );
 

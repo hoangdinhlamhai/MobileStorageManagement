@@ -8,10 +8,13 @@ import com.example.MobileStorageManagement.Repository.OrderDetailRepository;
 import com.example.MobileStorageManagement.Repository.OrderRepository;
 import com.example.MobileStorageManagement.Repository.PaymentRepository;
 import com.example.MobileStorageManagement.Service.PaymentService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +28,7 @@ public class PaymentController {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
 
-    // Tạo link thanh toán
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping("/create")
     public ResponseEntity<?> createPayment(
             @RequestParam Long orderId
@@ -70,13 +73,29 @@ public class PaymentController {
 
 
     // PayPal redirect về: /paypal/return?token=XYZ
+//    @GetMapping("/return")
+//    public ResponseEntity<?> paymentReturn(
+//            @RequestParam("token") String paypalOrderId
+//    ) {
+//        Payment payment = paymentService.completePayment(paypalOrderId);
+//        return ResponseEntity.ok(payment);
+//    }
+
     @GetMapping("/return")
-    public ResponseEntity<?> paymentReturn(
-            @RequestParam("token") String paypalOrderId
-    ) {
+    public void paymentReturn(
+            @RequestParam("token") String paypalOrderId,
+            HttpServletResponse response
+    ) throws IOException {
+
         Payment payment = paymentService.completePayment(paypalOrderId);
-        return ResponseEntity.ok(payment);
+
+        Long orderId = payment.getOrderId();
+
+        response.sendRedirect(
+                "http://localhost:5173/?payment=success&orderId=" + orderId
+        );
     }
+
 
     // Nếu user cancel trên PayPal
     @GetMapping("/cancel")

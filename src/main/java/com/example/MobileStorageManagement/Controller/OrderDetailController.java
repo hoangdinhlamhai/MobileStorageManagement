@@ -35,13 +35,20 @@ public class OrderDetailController {
         return ResponseEntity.ok(orderDetailService.toResponse(detail));
     }
 
-    // GET ALL DETAILS BY ORDER ID
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<List<OrderDetail>> getDetailsByOrderId(@PathVariable Long orderId) {
-        List<OrderDetail> details = orderDetailService.getDetailsByOrderID(orderId);
-        return ResponseEntity.ok(details);
+    public ResponseEntity<List<OrderDetailResponse>> getDetailsByOrderId(
+            @PathVariable Long orderId
+    ) {
+        List<OrderDetailResponse> responses =
+                orderDetailService.getDetailsByOrderID(orderId)
+                        .stream()
+                        .map(orderDetailService::toResponse)
+                        .toList();
+
+        return ResponseEntity.ok(responses);
     }
+
 
     // GET ALL
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
