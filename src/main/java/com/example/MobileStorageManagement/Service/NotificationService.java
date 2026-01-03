@@ -92,9 +92,15 @@ public class NotificationService {
         return savedThongBao;
     }
 
+    @Transactional
     public void delete(Integer id){
+        // 1. Xóa các bản ghi nhận thông báo trước
+        receiveNotificationsRepository.deleteByNotification_NotificationId(id);
+
+        // 2. Xóa notification
         notificationRepository.deleteById(id);
     }
+
 
     public NotificationResponse toDTO(ReceiveNotifications rn) {
         Notification n = rn.getNotification();
