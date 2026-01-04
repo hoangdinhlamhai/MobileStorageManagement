@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProductImageDTO {
-    private long id;
+    private Integer id;
     private String url;
     private long img_index;
 }

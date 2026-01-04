@@ -27,6 +27,14 @@ public class CartService {
         return dto;
     }
 
+    public Cart createCartForUser(User user) {
+        Cart cart = new Cart();
+        cart.setUser(user);
+        cart.setStatus("ACTIVE");
+        return cartRepository.save(cart);
+    }
+
+
     public CartDTO createCart(CartDTO DTO) {
         User user = userRepository.findById(DTO.getUserId())
                 .orElseThrow();

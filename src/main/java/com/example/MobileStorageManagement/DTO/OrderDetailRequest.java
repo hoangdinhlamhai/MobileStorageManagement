@@ -7,8 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderDetailRequest {
-
+public class
+OrderDetailRequest {
     private Long orderID;
     private Integer productID;
     private Integer quantity;

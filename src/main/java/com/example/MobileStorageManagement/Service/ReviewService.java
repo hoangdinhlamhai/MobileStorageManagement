@@ -4,13 +4,17 @@ import com.example.MobileStorageManagement.Adapter.CloudinaryAdapter;
 import com.example.MobileStorageManagement.DTO.ReviewRequest;
 import com.example.MobileStorageManagement.DTO.ReviewResponse;
 import com.example.MobileStorageManagement.Entity.Order;
+import com.example.MobileStorageManagement.Entity.Product;
 import com.example.MobileStorageManagement.Entity.Review;
+import com.example.MobileStorageManagement.Entity.User;
 import com.example.MobileStorageManagement.Repository.OrderRepository;
+import com.example.MobileStorageManagement.Repository.ProductRepository;
 import com.example.MobileStorageManagement.Repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,14 +24,21 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
     private final CloudinaryAdapter cloudinaryAdapter;
 
 
     // ===================== CREATE ===================== //
-    public Review createReview(ReviewRequest req) {
+    public Review createReview(ReviewRequest req, User user) {
 
-        Order order = orderRepository.findById(req.getOrderID())
-                .orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại"));
+        Product product = productRepository.findById(req.getProductID())
+                .orElseThrow(() -> new RuntimeException("Product không tồn tại"));
+
+        Order order = null;
+        if (req.getOrderID() != null) {
+            order = orderRepository.findById(req.getOrderID())
+                    .orElseThrow(() -> new RuntimeException("Order không tồn tại"));
+        }
 
         String photoUrl = null;
         String videoUrl = null;
@@ -41,13 +52,21 @@ public class ReviewService {
         }
 
         Review review = Review.builder()
+                .product(product)
+                .user(user)
                 .order(order)
+                .rating(req.getRating())
                 .comment(req.getComment())
                 .photoUrl(photoUrl)
                 .videoUrl(videoUrl)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         return reviewRepository.save(review);
+    }
+
+    public List<Review> getByProduct(Long productId) {
+        return reviewRepository.findByProduct_ProductId(productId);
     }
 
 
@@ -133,16 +152,14 @@ public class ReviewService {
     }
 
 
-    // ===================== MAP DTO ===================== //
     public ReviewResponse toResponse(Review review) {
-
-        if (review == null) return null;
-
-        Long orderId = review.getOrder() != null ? review.getOrder().getOrderID() : null;
 
         return ReviewResponse.builder()
                 .reviewID(review.getReviewID())
-                .orderID(orderId)
+                .productID(review.getProduct().getProductId())
+                .orderID(review.getOrder() != null ? review.getOrder().getOrderID() : null)
+                .userName(review.getUser().getFullName())
+                .rating(review.getRating())
                 .comment(review.getComment())
                 .photoUrl(review.getPhotoUrl())
                 .videoUrl(review.getVideoUrl())

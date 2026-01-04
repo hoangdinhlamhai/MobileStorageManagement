@@ -1,9 +1,10 @@
 package com.example.MobileStorageManagement.DTO;
 
 public class OrderDetailResponse {
+
     private Long id;
     private Long orderId;
-    private Long productId;
+    private Integer productId;
     private Integer quantity;
 
     public Long getId() {
@@ -22,11 +23,11 @@ public class OrderDetailResponse {
         this.orderId = orderId;
     }
 
-    public Long getProductId(Integer productId) {
-        return this.productId;
+    public Integer getProductId() {
+        return productId;
     }
 
-    public void setProductId(Long productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 
@@ -38,3 +39,5 @@ public class OrderDetailResponse {
         this.quantity = quantity;
     }
 }
+
+

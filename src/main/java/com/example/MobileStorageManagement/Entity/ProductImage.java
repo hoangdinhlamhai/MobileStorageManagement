@@ -15,14 +15,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
 
     private String url;
 
     private long img_index;
 
     @ManyToOne
-    @JoinColumn(name = "product_id") // Foreign key column
+    @JoinColumn(name = "product_id")
     @JsonIgnore // bỏ qua trường này khi gọi để tránh lặp vô hạn
     private Product product;
 }

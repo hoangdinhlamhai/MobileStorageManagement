@@ -10,6 +10,7 @@ import com.example.MobileStorageManagement.Repository.CategoryRepository;
 import com.example.MobileStorageManagement.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,11 +36,14 @@ public class CartController {
         this.cartRepository = cartRepository;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("")
     public ResponseEntity<List<CartDTO>> getAllCart() {
         return ResponseEntity.ok(this.cartService.getAllCarts());
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @GetMapping("/{id}")
     public Optional<Cart> getCartByUserId(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
@@ -47,16 +51,16 @@ public class CartController {
         return cartRepository.findByUser(user);
     }
 
-    @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PostMapping("")
     public ResponseEntity<CartDTO> create(@RequestBody CartDTO dto) {
         return ResponseEntity.ok(cartService.createCart(dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCartByUser(@PathVariable Integer id) {
         cartService.deleteCartByUserId(id);
         return ResponseEntity.ok("Deleted cart of userId = " + id);
     }
-
-
 }
