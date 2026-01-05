@@ -27,41 +27,75 @@ public class JwtFilter extends OncePerRequestFilter {
     private MyUserDetailsService userDetailsService;
 
 
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws ServletException, IOException {
+
+        String path = request.getServletPath();
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        if (
+                path.equals("/api/user/login") ||
+                path.equals("/api/user/register") ||
+                path.equals("/api/products") ||
+                path.startsWith("/api/products/") ||
+                path.startsWith("/api/public/")
+        ) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         final String authHeader = request.getHeader("Authorization");
 
-        String input = null;
-        String jwt = null;
-
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7);
-            try {
-                input = jwtUtil.extractUserInput(jwt);
-            } catch (Exception e) {
-                logger.warn("Không thể trích xuất username từ token.");
-            }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            chain.doFilter(request, response);
+            return;
         }
 
-        if (input != null && SecurityContextHolder.getContext().getAuthentication() == null) {// kiểm tra token hợp lệ và chưa xác thực
-            UserDetails userDetails = userDetailsService.loadUserByUsername(input);// lay thông tin user từ db
+        String jwt = authHeader.substring(7);
+        String input;
 
-            if (jwtUtil.validateToken(jwt)) {// kiểm tra tính hơp lệ của token
-                List<String> roles = jwtUtil.extractRoles(jwt);
-                List<SimpleGrantedAuthority> authorities = roles.stream()
-                        .map(SimpleGrantedAuthority::new)
-                        .toList();
+        try {
+            input = jwtUtil.extractUserInput(jwt);
+        } catch (Exception e) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-                UsernamePasswordAuthenticationToken token =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+        if (
+                input != null &&
+                        SecurityContextHolder.getContext().getAuthentication() == null &&
+                        jwtUtil.validateToken(jwt)
+        ) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(input);
 
-                token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            List<String> roles = jwtUtil.extractRoles(jwt);
+            List<SimpleGrantedAuthority> authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .toList();
 
-                SecurityContextHolder.getContext().setAuthentication(token);
-            }
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            authorities
+                    );
+
+            authToken.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request)
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
         chain.doFilter(request, response);
     }
+
 }

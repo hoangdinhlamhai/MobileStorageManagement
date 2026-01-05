@@ -16,6 +16,7 @@ import com.example.MobileStorageManagement.Entity.Product;
 import com.example.MobileStorageManagement.Repository.CartDetailRepository;
 import com.example.MobileStorageManagement.Repository.CartRepository;
 import com.example.MobileStorageManagement.Repository.ProductRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -85,6 +86,11 @@ public class CartDetailService {
 
     public void delete(Integer id) {
         cartDetailRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteByCartId(Integer id){
+        cartDetailRepository.deleteByCartCartId(id);
     }
 
     public CartDetailResponse toResponse(CartDetail cartDetail) {

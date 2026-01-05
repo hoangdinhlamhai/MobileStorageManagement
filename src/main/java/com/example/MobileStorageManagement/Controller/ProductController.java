@@ -2,15 +2,9 @@ package com.example.MobileStorageManagement.Controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.MobileStorageManagement.DTO.ProductDTO;
 import com.example.MobileStorageManagement.Service.ProductService;
@@ -25,13 +19,15 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PreAuthorize("hasRole ('ADMIN') or hasRole('USER')")
     @GetMapping
-    public List<ProductDTO> getAll() {
-        return productService.getAll();
+    public ResponseEntity<List<ProductDTO>> getAllProducts(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0", name = "categoryId") Integer categoryId
+    ) {
+        List<ProductDTO> products = productService.searchProducts(keyword, categoryId);
+        return ResponseEntity.ok(products);
     }
 
-    @PreAuthorize("hasRole ('ADMIN')")
     @GetMapping("/{id}")
     public ProductDTO getById(@PathVariable Integer id) {
         return productService.getById(id);

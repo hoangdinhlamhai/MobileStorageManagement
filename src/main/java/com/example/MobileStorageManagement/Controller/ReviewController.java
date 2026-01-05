@@ -3,11 +3,13 @@ package com.example.MobileStorageManagement.Controller;
 import com.example.MobileStorageManagement.DTO.ReviewRequest;
 import com.example.MobileStorageManagement.DTO.ReviewResponse;
 import com.example.MobileStorageManagement.Entity.Review;
+import com.example.MobileStorageManagement.Entity.User;
 import com.example.MobileStorageManagement.Service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,22 +25,40 @@ public class ReviewController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<ReviewResponse> createReview(
-            @RequestParam Long orderID,
+            @RequestParam Integer productID,
+            @RequestParam Integer rating,
+            @RequestParam(required = false) Long orderID,
             @RequestParam(required = false) String comment,
             @RequestPart(required = false) MultipartFile photo,
-            @RequestPart(required = false) MultipartFile video
+            @RequestPart(required = false) MultipartFile video,
+            Authentication authentication
     ) {
 
+        User user = (User) authentication.getPrincipal();
+
         ReviewRequest req = ReviewRequest.builder()
+                .productID(productID)
                 .orderID(orderID)
+                .rating(rating)
                 .comment(comment)
                 .photo(photo)
                 .video(video)
                 .build();
 
-        Review created = reviewService.createReview(req);
+        Review review = reviewService.createReview(req, user);
 
-        return ResponseEntity.ok(reviewService.toResponse(created));
+        return ResponseEntity.ok(reviewService.toResponse(review));
+    }
+
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<List<ReviewResponse>> getByProduct(@PathVariable Long productId) {
+
+        return ResponseEntity.ok(
+                reviewService.getByProduct(productId)
+                        .stream()
+                        .map(reviewService::toResponse)
+                        .toList()
+        );
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")

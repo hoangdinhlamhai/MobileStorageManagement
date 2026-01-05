@@ -1,5 +1,6 @@
 package com.example.MobileStorageManagement.Controller;
 
+import com.example.MobileStorageManagement.DTO.OrderFullResponse;
 import com.example.MobileStorageManagement.DTO.OrderRequest;
 import com.example.MobileStorageManagement.DTO.OrderResponse;
 import com.example.MobileStorageManagement.Entity.Order;
@@ -43,18 +44,25 @@ public class OrderController {
     // GET ALL ORDERS BY USER
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<OrderResponse>> getOrdersByUser(@PathVariable Integer userId) {
-        return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+    public ResponseEntity<List<OrderFullResponse>> getOrdersByUser(
+            @PathVariable Integer userId
+    ) {
+        return ResponseEntity.ok(
+                orderService.getOrdersByUser(userId)
+        );
     }
+
 
 
     // GET ALL
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
-        return ResponseEntity.ok(orders);
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+        return ResponseEntity.ok(
+                orderService.getAllOrders()
+        );
     }
+
 
     // UPDATE
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")

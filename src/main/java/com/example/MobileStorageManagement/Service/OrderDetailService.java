@@ -94,8 +94,8 @@ public class OrderDetailService {
     }
 
     public OrderDetailResponse toResponse(OrderDetail orderDetail) {
-
         OrderDetailResponse dto = new OrderDetailResponse();
+
         dto.setId(orderDetail.getOrderDetailID());
         dto.setQuantity(orderDetail.getQuantity());
 
@@ -104,9 +104,10 @@ public class OrderDetailService {
         }
 
         if (orderDetail.getProduct() != null) {
-            dto.getProductId(orderDetail.getProduct().getProductId());
+            dto.setProductId(orderDetail.getProduct().getProductId());
         }
 
         return dto;
     }
+
 }

@@ -89,11 +89,54 @@ public class ProductService {
         return product;
     }
 
-    public List<ProductDTO> getAll() {
-        return productRepository.findAll().stream()
-                .map(this::toDTO)
+    public List<ProductDTO> searchProducts(String keyword, Integer categoryId) {
+
+        List<Product> products = productRepository.searchProduct(categoryId, keyword);
+
+        return products.stream()
+                .map(product -> ProductDTO.builder()
+                        .productId(product.getProductId())
+                        .name(product.getName())
+                        .price(product.getPrice())
+                        .stockQuantity(product.getStockQuantity())
+                        .description(product.getDescription())
+                        .brandId(product.getBrand() != null
+                                ? product.getBrand().getBrandId()
+                                : null)
+                        .categoryId(product.getCategory() != null
+                                ? product.getCategory().getCategoryId()
+                                : null)
+                        .specification(product.getSpecification() != null
+                                ? SpecificationDTO.builder()
+                                .specId(product.getSpecification().getSpecId())
+                                .screen(product.getSpecification().getScreen())
+                                .os(product.getSpecification().getOs())
+                                .cpu(product.getSpecification().getCpu())
+                                .ram(product.getSpecification().getRam())
+                                .battery(product.getSpecification().getBattery())
+                                .storage(product.getSpecification().getStorage())
+                                .camera(product.getSpecification().getCamera())
+                                .build()
+                                : null)
+                        .productImages(product.getProductImages() != null
+                                ? product.getProductImages().stream()
+                                .map(img -> ProductImageDTO.builder()
+                                        .id(img.getId())
+                                        .url(img.getUrl())
+                                        .img_index(img.getImg_index())
+                                        .build())
+                                .collect(Collectors.toList())
+                                : List.of())
+                        .build()
+                )
                 .collect(Collectors.toList());
     }
+
+//    public List<ProductDTO> getAll() {
+//        return productRepository.findAll().stream()
+//                .map(this::toDTO)
+//                .collect(Collectors.toList());
+//    }
 
     public ProductDTO getById(Integer id) {
         return productRepository.findById(id)
