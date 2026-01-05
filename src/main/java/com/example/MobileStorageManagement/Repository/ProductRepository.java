@@ -28,4 +28,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("categoryId") Integer categoryId,
             @Param("keyword") String keyword
     );
+
+    // Lấy tất cả sản phẩm còn hàng
+    List<Product> findByStockQuantityGreaterThan(Integer stockQuantity);
+
+    // Fallback: lấy 3 sản phẩm rẻ nhất còn hàng
+    List<Product> findTop3ByStockQuantityGreaterThanOrderByPriceAsc(Integer stockQuantity);
 }

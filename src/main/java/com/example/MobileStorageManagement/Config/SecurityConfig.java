@@ -49,9 +49,9 @@ public class SecurityConfig {
                                 "/api/public/**",
                                 "/api/products",
                                 "/api/products/*",
-
                                 "/api/categories",
-
+                                "/api/ai",
+                                "/api/ai/*",
                                 "/paypal/**",
                                 "/error",
                                 "/favicon.ico"
