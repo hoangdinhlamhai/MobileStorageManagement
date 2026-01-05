@@ -16,4 +16,6 @@ public interface ReceiveNotificationsRepository extends JpaRepository<ReceiveNot
     @Query("SELECT rn FROM ReceiveNotifications rn " +
             "WHERE rn.user.role.roleName = :roleName")
     List<ReceiveNotifications> findByUserRole(String roleName);
+
+    void deleteByNotification_NotificationId(Integer notificationId);
 }

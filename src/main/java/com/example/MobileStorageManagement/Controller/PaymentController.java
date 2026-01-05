@@ -28,8 +28,8 @@ public class PaymentController {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<?> createPayment(
             @RequestParam Long orderId
     ) {

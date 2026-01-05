@@ -68,4 +68,10 @@ public class CartDetailController {
         cartDetailService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @DeleteMapping("/cart/{cartId}")
+    public void clearCart(@PathVariable Integer cartId) {
+        cartDetailService.deleteByCartId(cartId);
+    }
 }

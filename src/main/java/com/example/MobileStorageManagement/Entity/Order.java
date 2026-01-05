@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "`order`") // tên bảng gợi ý, bạn đổi tùy DB
@@ -34,4 +35,6 @@ public class Order {
     @JoinColumn(name = "UserID", nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private List<OrderDetail> orderDetails;
 }

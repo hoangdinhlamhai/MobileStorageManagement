@@ -10,9 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class ReviewRequest {
 
+    private Integer productID;
     private Long orderID;
+    private Integer rating;
     private String comment;
-
-    private MultipartFile photo;  // file ảnh từ máy local
-    private MultipartFile video;  // file video từ máy local
+    private MultipartFile photo;
+    private MultipartFile video;
 }

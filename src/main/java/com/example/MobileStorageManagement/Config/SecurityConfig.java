@@ -50,6 +50,8 @@ public class SecurityConfig {
                                 "/api/products",
                                 "/api/products/*",
 
+                                "/api/categories",
+
                                 "/paypal/**",
                                 "/error",
                                 "/favicon.ico"

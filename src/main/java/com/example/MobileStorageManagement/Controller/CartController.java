@@ -63,6 +63,4 @@ public class CartController {
         cartService.deleteCartByUserId(id);
         return ResponseEntity.ok("Deleted cart of userId = " + id);
     }
-
-
 }
