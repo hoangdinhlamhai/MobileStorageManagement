@@ -27,4 +27,7 @@ public class OrderDetail {
 
     @Column(name = "Quantity", nullable = false)
     private Integer quantity;
+
+    @Column(nullable = false)
+    private Double unitPrice;
 }

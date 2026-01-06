@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "`order`") // tên bảng gợi ý, bạn đổi tùy DB
+@Table(name = "`order`")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,6 +30,30 @@ public class Order {
 
     @Column(name = "PaymentStatus", nullable = false)
     private String paymentStatus;
+
+    /* ================= DISCOUNT SNAPSHOT ================= */
+
+    @Column(name = "DiscountCode")
+    private String discountCode; // VD: NEWYEAR2026
+
+    @Column(name = "DiscountType")
+    private String discountType; // PERCENT | FIXED
+
+    @Column(name = "DiscountValue")
+    private Double discountValue; // 10 (%) hoặc 50000
+
+    @Column(name = "DiscountAmount")
+    private Double discountAmount; // số tiền giảm thực tế
+
+    /* ================= PRICE ================= */
+
+    @Column(name = "SubTotal", nullable = false)
+    private Double subTotal;
+
+    @Column(name = "TotalAmount", nullable = false)
+    private Double totalAmount;
+
+    /* ================= RELATION ================= */
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID", nullable = false)

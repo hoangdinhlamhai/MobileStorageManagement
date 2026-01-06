@@ -12,5 +12,8 @@ public class OrderFullResponse {
     private String status;
     private String paymentStatus;
     private Integer userID;
+    private Double subTotal;
+    private Double discountAmount;
+    private Double totalAmount;
     private List<OrderProductDTO> products;
 }
