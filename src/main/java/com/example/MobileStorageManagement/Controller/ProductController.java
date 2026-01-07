@@ -33,19 +33,19 @@ public class ProductController {
         return productService.getById(id);
     }
 
-    @PreAuthorize("hasRole ('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ProductDTO create(@RequestBody ProductDTO dto) {
         return productService.create(dto);
     }
 
-    @PreAuthorize("hasRole ('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ProductDTO update(@PathVariable Integer id, @RequestBody ProductDTO dto) {
         return productService.update(id, dto);
     }
 
-    @PreAuthorize("hasRole ('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         productService.delete(id);

@@ -32,6 +32,7 @@ public class Product {
 
     private String description;
 
+    @Builder.Default
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductImage> productImages = new ArrayList<>();
@@ -68,4 +69,13 @@ public class Product {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    @Column(name = "Deleted_At")
+    @JsonIgnore
+    private LocalDateTime deletedAt;
+
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
+
 }

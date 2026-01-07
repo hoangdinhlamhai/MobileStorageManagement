@@ -1,5 +1,6 @@
 package com.example.MobileStorageManagement.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -139,7 +140,8 @@ public class ProductService {
 //    }
 
     public ProductDTO getById(Integer id) {
-        return productRepository.findById(id)
+        return productRepository
+                .findByProductIdAndDeletedAtIsNull(id)
                 .map(this::toDTO)
                 .orElse(null);
     }
@@ -187,6 +189,11 @@ public class ProductService {
     }
 
     public void delete(Integer id) {
-        productRepository.deleteById(id);
+        Product product = productRepository.findById(id).orElse(null);
+        if (product == null) return;
+
+        product.setDeletedAt(LocalDateTime.now());
+        productRepository.save(product);
     }
+
 }
