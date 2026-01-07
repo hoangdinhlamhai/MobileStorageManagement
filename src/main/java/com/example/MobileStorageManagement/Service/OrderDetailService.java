@@ -17,97 +17,90 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OrderDetailService {
 
     private final OrderDetailRepository orderDetailRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
-    public OrderDetailService(OrderDetailRepository orderDetailRepository, OrderRepository orderRepository, ProductRepository productRepository) {
-        this.orderDetailRepository = orderDetailRepository;
-        this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
-    }
-
     // CREATE
-    public OrderDetail createOrderDetail(OrderDetailRequest dto) {
-
+    public OrderDetailResponse create(OrderDetailRequest dto) {
         Order order = orderRepository.findById(dto.getOrderID())
                 .orElseThrow(() -> new RuntimeException("Order không tồn tại"));
 
         Product product = productRepository.findById(dto.getProductID())
                 .orElseThrow(() -> new RuntimeException("Product không tồn tại"));
 
-        OrderDetail orderDetail = OrderDetail.builder()
+        OrderDetail detail = OrderDetail.builder()
                 .order(order)
                 .product(product)
                 .quantity(dto.getQuantity())
                 .build();
 
-        return orderDetailRepository.save(orderDetail);
+        return toResponse(orderDetailRepository.save(detail));
     }
 
     // GET BY ID
-    public OrderDetail getOrderDetailById(Long id) {
-        return orderDetailRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("OrderDetail không tồn tại"));
+    public OrderDetailResponse getById(Long id) {
+        return toResponse(
+                orderDetailRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("OrderDetail không tồn tại"))
+        );
     }
 
-    // GET ALL BY ORDER ID
-    public List<OrderDetail> getDetailsByOrderID(Long orderID) {
-        return orderDetailRepository.findByOrder_OrderID(orderID);
+    // GET BY ORDER ID
+    public List<OrderDetailResponse> getByOrderId(Long orderId) {
+        return orderDetailRepository.findByOrder_OrderID(orderId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     // GET ALL
-    public List<OrderDetail> getAllOrderDetails() {
-        return orderDetailRepository.findAll();
+    public List<OrderDetailResponse> getAll() {
+        return orderDetailRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     // UPDATE
-    public OrderDetail updateOrderDetail(Long id, OrderDetailRequest dto) {
-        OrderDetail detail = getOrderDetailById(id);
+    public OrderDetailResponse update(Long id, OrderDetailRequest dto) {
+        OrderDetail detail = orderDetailRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("OrderDetail không tồn tại"));
 
-        // update quantity
         detail.setQuantity(dto.getQuantity());
 
-        // update order nếu gửi OrderID khác
         if (dto.getOrderID() != null) {
-            Order newOrder = orderRepository.findById(dto.getOrderID())
-                    .orElseThrow(() -> new RuntimeException("Order không tồn tại"));
-            detail.setOrder(newOrder);
+            detail.setOrder(
+                    orderRepository.findById(dto.getOrderID())
+                            .orElseThrow(() -> new RuntimeException("Order không tồn tại"))
+            );
         }
 
-        // update product nếu gửi ProductID khác
         if (dto.getProductID() != null) {
-            Product newProduct = productRepository.findById(dto.getProductID())
-                    .orElseThrow(() -> new RuntimeException("Product không tồn tại"));
-            detail.setProduct(newProduct);
+            detail.setProduct(
+                    productRepository.findById(dto.getProductID())
+                            .orElseThrow(() -> new RuntimeException("Product không tồn tại"))
+            );
         }
 
-        return orderDetailRepository.save(detail);
+        return toResponse(orderDetailRepository.save(detail));
     }
 
     // DELETE
-    public void deleteOrderDetail(Long id) {
-        OrderDetail detail = getOrderDetailById(id);
-        orderDetailRepository.delete(detail);
+    public void delete(Long id) {
+        orderDetailRepository.deleteById(id);
     }
 
-    public OrderDetailResponse toResponse(OrderDetail orderDetail) {
+    // MAPPER
+    private OrderDetailResponse toResponse(OrderDetail detail) {
         OrderDetailResponse dto = new OrderDetailResponse();
-
-        dto.setId(orderDetail.getOrderDetailID());
-        dto.setQuantity(orderDetail.getQuantity());
-
-        if (orderDetail.getOrder() != null) {
-            dto.setOrderId(orderDetail.getOrder().getOrderID());
-        }
-
-        if (orderDetail.getProduct() != null) {
-            dto.setProductId(orderDetail.getProduct().getProductId());
-        }
-
+        dto.setId(detail.getOrderDetailID());
+        dto.setQuantity(detail.getQuantity());
+        dto.setOrderId(detail.getOrder().getOrderID());
+        dto.setProductId(detail.getProduct().getProductId());
         return dto;
     }
-
 }

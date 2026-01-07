@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/order-details")
 public class OrderDetailController {
+
     private final OrderDetailService orderDetailService;
 
     public OrderDetailController(OrderDetailService orderDetailService) {
@@ -22,58 +23,63 @@ public class OrderDetailController {
     // CREATE
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping
-    public ResponseEntity<OrderDetailResponse> createOrderDetail(@RequestBody OrderDetailRequest dto) {
-        OrderDetail detail = orderDetailService.createOrderDetail(dto);
-        return ResponseEntity.ok(orderDetailService.toResponse(detail));
+    public ResponseEntity<OrderDetailResponse> create(
+            @RequestBody OrderDetailRequest dto
+    ) {
+        return ResponseEntity.ok(
+                orderDetailService.create(dto)
+        );
     }
 
-    // GET DETAIL BY ID
+    // GET BY ID
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDetailResponse> getOrderDetailById(@PathVariable Long id) {
-        OrderDetail detail = orderDetailService.getOrderDetailById(id);
-        return ResponseEntity.ok(orderDetailService.toResponse(detail));
+    public ResponseEntity<OrderDetailResponse> getById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(
+                orderDetailService.getById(id)
+        );
     }
 
+    // GET BY ORDER ID
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<List<OrderDetailResponse>> getDetailsByOrderId(
+    public ResponseEntity<List<OrderDetailResponse>> getByOrderId(
             @PathVariable Long orderId
     ) {
-        List<OrderDetailResponse> responses =
-                orderDetailService.getDetailsByOrderID(orderId)
-                        .stream()
-                        .map(orderDetailService::toResponse)
-                        .toList();
-
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.ok(
+                orderDetailService.getByOrderId(orderId)
+        );
     }
-
 
     // GET ALL
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
-    public ResponseEntity<List<OrderDetail>> getAllOrderDetails() {
-        List<OrderDetail> list = orderDetailService.getAllOrderDetails();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<List<OrderDetailResponse>> getAll() {
+        return ResponseEntity.ok(
+                orderDetailService.getAll()
+        );
     }
 
     // UPDATE
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping("/{id}")
-    public ResponseEntity<OrderDetail> updateOrderDetail(
+    public ResponseEntity<OrderDetailResponse> update(
             @PathVariable Long id,
             @RequestBody OrderDetailRequest dto
     ) {
-        OrderDetail updated = orderDetailService.updateOrderDetail(id, dto);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(
+                orderDetailService.update(id, dto)
+        );
     }
 
     // DELETE
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteOrderDetail(@PathVariable Long id) {
-        orderDetailService.deleteOrderDetail(id);
-        return ResponseEntity.ok("OrderDetail đã được xoá thành công");
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        orderDetailService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
+
