@@ -1,8 +1,6 @@
 package com.example.MobileStorageManagement.Service;
 
-import com.example.MobileStorageManagement.DTO.BatchRequest;
-import com.example.MobileStorageManagement.DTO.BatchResponse;
-import com.example.MobileStorageManagement.DTO.ProductDTO;
+import com.example.MobileStorageManagement.DTO.*;
 import com.example.MobileStorageManagement.Entity.Batch;
 import com.example.MobileStorageManagement.Entity.Product;
 import com.example.MobileStorageManagement.Repository.BatchRepository;
@@ -139,4 +137,60 @@ public class BatchService {
                 )
                 .build();
     }
+
+    public List<BatchPriceStatisticDTO> getBatchPriceStatistic() {
+
+        return batchRepository.getBatchPriceStatistic()
+                .stream()
+                .map(r -> new BatchPriceStatisticDTO(
+                        (java.time.LocalDate) r[0],
+                        ((Number) r[1]).doubleValue()
+                ))
+                .toList();
+    }
+
+    public InventoryStatisticResponse getInventoryStatistic(
+            Integer year,
+            Integer month,
+            Integer day
+    ) {
+        InventoryStatisticResponse res = new InventoryStatisticResponse();
+
+        res.setAvailableYears(batchRepository.getAvailableYears());
+        res.setSelectedYear(year);
+        res.setSelectedMonth(month);
+        res.setSelectedDay(day);
+
+        List<InventoryStatisticItem> items = batchRepository
+                .getInventoryStatistic(year, month, day)
+                .stream()
+                .map(r -> {
+                    InventoryStatisticItem item = new InventoryStatisticItem();
+
+                    InventoryProductDTO product = new InventoryProductDTO();
+                    product.setProductId((Integer) r[0]);
+                    product.setProductName((String) r[1]);
+                    product.setImageUrl((String) r[2]);
+                    product.setQuantity((Integer) r[3]);
+
+                    InventorySupplierDTO supplier = new InventorySupplierDTO();
+                    supplier.setSupplierName((String) r[4]);
+
+                    InventoryBatchDTO batch = new InventoryBatchDTO();
+                    batch.setBatchId((Long) r[5]);
+                    batch.setExpiryDate((java.time.LocalDate) r[6]);
+
+                    item.setProduct(product);
+                    item.setSupplier(supplier);
+                    item.setBatch(batch);
+
+                    return item;
+                })
+                .toList();
+
+        res.setItems(items);
+        return res;
+    }
+
+
 }

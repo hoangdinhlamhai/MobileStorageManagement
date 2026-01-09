@@ -45,4 +45,24 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     // 📋 Lấy tất cả chưa bị xóa
     List<Product> findByDeletedAtIsNull();
+
+    @Query("""
+    SELECT 
+        s.supplierId,
+        s.supplierName,
+        p.name,
+        p.price,
+        p.stockQuantity,
+        (
+            SELECT img.url
+            FROM ProductImage img
+            WHERE img.product = p
+              AND img.img_index = 0
+        )
+    FROM Product p
+    JOIN p.supplier s
+    WHERE p.deletedAt IS NULL
+""")
+    List<Object[]> getProductStatisticBySupplier();
+
 }

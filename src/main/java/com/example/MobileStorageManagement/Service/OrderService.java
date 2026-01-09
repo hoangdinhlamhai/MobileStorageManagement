@@ -216,4 +216,99 @@ public class OrderService {
         res.setUserID(order.getUser().getUserId());
         return res;
     }
+
+
+    public DoanhThuDonHangResponse getDoanhThuDonHang(int year) {
+
+        // 1️⃣ Doanh thu theo tháng
+        List<Object[]> rows = orderRepository.getMonthlyRevenue(year);
+
+        List<MonthlyRevenueDTO> data = rows.stream()
+                .map(r -> new MonthlyRevenueDTO(
+                        ((Number) r[0]).intValue(),     // tháng
+                        ((Number) r[1]).longValue(),   // số đơn
+                        ((Number) r[2]).doubleValue()  // doanh thu
+                ))
+                .toList();
+
+        // 2️⃣ Tổng doanh thu + tổng đơn
+        List<Object[]> totalRows = orderRepository.getTotalRevenue(year);
+
+        long tongDonHang = 0;
+        double tongDoanhThu = 0;
+
+        if (!totalRows.isEmpty()) {
+            Object[] row = totalRows.get(0);
+
+            Number totalOrders = (Number) row[0];
+            Number totalRevenue = (Number) row[1];
+
+            tongDonHang = totalOrders != null ? totalOrders.longValue() : 0;
+            tongDoanhThu = totalRevenue != null ? totalRevenue.doubleValue() : 0;
+        }
+
+        // 3️⃣ Build response
+        DoanhThuDonHangResponse res = new DoanhThuDonHangResponse();
+        res.setData(data);
+        res.setTongDonHang(tongDonHang);
+        res.setTongDoanhThu(tongDoanhThu);
+        res.setYears(orderRepository.getAvailableYears());
+
+        return res;
+    }
+
+    public OrderStatusStatisticResponse getOrderStatusStatistic(
+            Integer year,
+            Integer month,
+            Integer day
+    ) {
+
+        OrderStatusStatisticResponse res = new OrderStatusStatisticResponse();
+
+        res.setAvailableYears(orderRepository.getAvailableYears());
+
+        res.setSelectedYear(year);
+        res.setSelectedMonth(month);
+        res.setSelectedDay(day);
+
+        res.setTotalOrders(
+                orderRepository.countTotalOrders(year, month, day)
+        );
+
+        res.setCompletedOrders(
+                orderRepository.countCompletedOrders(year, month, day)
+        );
+
+        res.setCancelledOrders(
+                orderRepository.countCancelledOrders(year, month, day)
+        );
+
+        return res;
+    }
+
+    public List<OrderSummaryDTO> getOrdersWithUserInfo() {
+
+        return orderRepository.findAllWithUser()
+                .stream()
+                .map(order -> {
+                    OrderSummaryDTO dto = new OrderSummaryDTO();
+
+                    dto.setOrderId(order.getOrderID());
+                    dto.setOrderDate(order.getOrderDate());
+                    dto.setStatus(order.getStatus());
+                    dto.setPaymentStatus(order.getPaymentStatus());
+                    dto.setTotalAmount(order.getTotalAmount());
+
+                    OrderUserDTO userDTO = new OrderUserDTO();
+                    userDTO.setFullName(order.getUser().getFullName());
+                    userDTO.setPhone(order.getUser().getSdt());
+                    userDTO.setAddress(order.getUser().getAddress());
+
+                    dto.setUser(userDTO);
+                    return dto;
+                })
+                .toList();
+    }
+
+
 }

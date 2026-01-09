@@ -16,6 +16,7 @@ public class ProductDTO {
     private String description;
     private Integer brandId;
     private Integer categoryId;
+    private Integer supplierId;
     private SpecificationDTO specification;
     private List<ProductImageDTO> productImages;
 }

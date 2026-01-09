@@ -1,8 +1,6 @@
 package com.example.MobileStorageManagement.Controller;
 
-import com.example.MobileStorageManagement.DTO.OrderFullResponse;
-import com.example.MobileStorageManagement.DTO.OrderRequest;
-import com.example.MobileStorageManagement.DTO.OrderResponse;
+import com.example.MobileStorageManagement.DTO.*;
 import com.example.MobileStorageManagement.Entity.Order;
 import com.example.MobileStorageManagement.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,4 +88,33 @@ public class OrderController {
         orderService.deleteOrder(id);
         return ResponseEntity.ok("Order đã được xoá thành công");
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/doanh-thu")
+    public ResponseEntity<DoanhThuDonHangResponse> getDoanhThuDonHang(
+            @RequestParam int year
+    ) {
+        return ResponseEntity.ok(
+                orderService.getDoanhThuDonHang(year)
+        );
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @GetMapping("/statistic/order-status")
+    public OrderStatusStatisticResponse getOrderStatusStatistic(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer day
+    ) {
+        return orderService.getOrderStatusStatistic(year, month, day);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/list/with-user")
+    public ResponseEntity<List<OrderSummaryDTO>> getOrdersWithUserInfo() {
+        return ResponseEntity.ok(
+                orderService.getOrdersWithUserInfo()
+        );
+    }
+
 }

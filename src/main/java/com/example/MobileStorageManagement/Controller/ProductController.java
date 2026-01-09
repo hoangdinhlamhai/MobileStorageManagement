@@ -2,6 +2,7 @@ package com.example.MobileStorageManagement.Controller;
 
 import java.util.List;
 
+import com.example.MobileStorageManagement.DTO.SupplierProductStatisticResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -50,4 +51,13 @@ public class ProductController {
     public void delete(@PathVariable Integer id) {
         productService.delete(id);
     }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @GetMapping("/statistic/supplier")
+    public ResponseEntity<List<SupplierProductStatisticResponse>> getProductStatisticBySupplier() {
+        return ResponseEntity.ok(
+                productService.getProductStatisticBySupplier()
+        );
+    }
+
 }

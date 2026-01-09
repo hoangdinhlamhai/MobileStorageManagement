@@ -4,14 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.MobileStorageManagement.DTO.*;
 import com.example.MobileStorageManagement.Entity.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 
-import com.example.MobileStorageManagement.DTO.ProductDTO;
-import com.example.MobileStorageManagement.DTO.ProductImageDTO;
-import com.example.MobileStorageManagement.DTO.SpecificationDTO;
 import com.example.MobileStorageManagement.Repository.ProductRepository;
 
 @Service
@@ -35,6 +33,7 @@ public class ProductService {
                 .description(product.getDescription())
                 .brandId(product.getBrand() != null ? product.getBrand().getBrandId() : null)
                 .categoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null)
+                .supplierId(product.getSupplier() != null ? product.getSupplier().getSupplierId() : null)
                 .specification(product.getSpecification() != null ? SpecificationDTO.builder()
                         .specId(product.getSpecification().getSpecId())
                         .screen(product.getSpecification().getScreen())
@@ -72,6 +71,12 @@ public class ProductService {
         if (dto.getCategoryId() != null) {
             product.setCategory(
                     entityManager.getReference(Category.class, dto.getCategoryId())
+            );
+        }
+
+        if (dto.getSupplierId() != null) {
+            product.setSupplier(
+                    entityManager.getReference(Supplier.class, dto.getSupplierId())
             );
         }
 
@@ -122,6 +127,9 @@ public class ProductService {
                         .categoryId(product.getCategory() != null
                                 ? product.getCategory().getCategoryId()
                                 : null)
+                        .supplierId(product.getSupplier() != null
+                                ? product.getSupplier().getSupplierId()
+                                : null)
                         .specification(product.getSpecification() != null
                                 ? SpecificationDTO.builder()
                                 .specId(product.getSpecification().getSpecId())
@@ -147,7 +155,6 @@ public class ProductService {
                 )
                 .collect(Collectors.toList());
     }
-
 //    public List<ProductDTO> getAll() {
 //        return productRepository.findAll().stream()
 //                .map(this::toDTO)
@@ -188,6 +195,11 @@ public class ProductService {
             );
         }
 
+        if (dto.getSupplierId() != null) {
+            exist.setSupplier(
+                    entityManager.getReference(Supplier.class, dto.getSupplierId())
+            );
+        }
 
         // Update specification
         if (dto.getSpecification() != null) {
@@ -228,4 +240,22 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public List<SupplierProductStatisticResponse> getProductStatisticBySupplier() {
+
+        return productRepository.getProductStatisticBySupplier()
+                .stream()
+                .map(r -> new SupplierProductStatisticResponse(
+                        SupplierDTO.builder()
+                                .supplierId((Integer) r[0])
+                                .supplierName((String) r[1])
+                                .build(),
+                        new ProductStatisticDTO(
+                                (String) r[2],                 // productName
+                                (String) r[5],                 // imageUrl
+                                ((Number) r[3]).doubleValue(), // unitPrice
+                                (Integer) r[4]                 // quantity
+                        )
+                ))
+                .toList();
+    }
 }
