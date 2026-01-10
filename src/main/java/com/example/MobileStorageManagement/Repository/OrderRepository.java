@@ -65,7 +65,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("""
     SELECT COUNT(o)
     FROM Order o
-    WHERE o.status = 'COMPLETED'
+    WHERE o.status = 'APPROVED'
       AND (:year IS NULL OR YEAR(o.orderDate) = :year)
       AND (:month IS NULL OR MONTH(o.orderDate) = :month)
       AND (:day IS NULL OR DAY(o.orderDate) = :day)
@@ -100,4 +100,3 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllWithUser();
 
 }
-
